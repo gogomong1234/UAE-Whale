@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#17212b" />
+  <title>김지현 관점방</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="assets/avatar.jpg" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0e1621;
+      --header: #17212b;
+      --text: #f5f5f5;
+      --bubble: #182533;
+      --link: #6ab3f3;
+      --blue: #2aabee;
+      --chip: #25303d;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html, body { height: 100%; background: #0b0f14; color: var(--text); font-family: "Noto Sans KR", "Segoe UI", sans-serif; }
+    body { display: grid; place-items: center; }
+    .app-window {
+      width: min(430px, 100vw);
+      height: min(860px, 100vh);
+      background: var(--bg);
+      display: flex; flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,.55);
+    }
+    @media (max-width: 480px) { .app-window { width: 100vw; height: 100vh; } }
+    .winbar {
+      height: 36px; background: #1b2733; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 10px 0 14px; color: #9aa8b4; font-size: 13px; flex-shrink: 0;
+    }
+    .winbar .dots { display: flex; gap: 8px; }
+    .winbar i { width: 12px; height: 12px; border-radius: 2px; display: inline-block; background: #3d4b58; }
+    .winbar .cls { background: #e04f4f; }
+    header.tg {
+      height: 60px; background: var(--header); display: flex; align-items: center; gap: 10px;
+      padding: 8px 12px; flex-shrink: 0;
+    }
+    .back { width: 28px; color: #d7e3ee; font-size: 26px; line-height: 1; }
+    .avatar { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; }
+    .who { flex: 1; min-width: 0; }
+    .who h1 { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+    .who p { font-size: 13px; color: #8fa1b0; margin-top: 1px; }
+    .icon-btn { width: 34px; height: 34px; display: grid; place-items: center; color: #c5d3de; font-size: 18px; }
+    .feed { flex: 1; overflow-y: auto; padding: 10px 8px 12px; background: var(--bg); }
+    .feed::-webkit-scrollbar { width: 0; }
+    .date-chip { display: flex; justify-content: center; margin: 10px 0 14px; }
+    .date-chip span { background: #1c2a38; color: #d5dee6; font-size: 13px; padding: 5px 12px; border-radius: 20px; }
+    .msg { background: var(--bubble); border-radius: 10px 14px 14px 10px; padding: 10px 12px 8px; margin: 0 4px 10px; }
+    .msg .author { color: var(--blue); font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+    .msg .txt { font-size: 15px; line-height: 1.55; white-space: pre-wrap; word-break: break-word; }
+    .msg .txt a { color: var(--link); text-decoration: none; }
+    .msg .disc { margin-top: 12px; font-size: 14px; font-style: italic; color: #d7e0e8; line-height: 1.5; }
+    .yt { margin-top: 10px; border-left: 3px solid #7b5cff; background: #1b2836; border-radius: 0 8px 8px 0; overflow: hidden; display: block; color: inherit; text-decoration: none; }
+    .yt .meta { padding: 8px 10px 6px; }
+    .yt .meta small { color: #8b9aa8; font-size: 12px; }
+    .yt .meta b { display: block; font-size: 14px; margin: 3px 0; }
+    .yt .meta p { color: #9aafbf; font-size: 13px; white-space: pre-wrap; }
+    .yt .thumb { position: relative; width: 100%; aspect-ratio: 16 / 9; }
+    .yt .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .yt .play { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 58px; height: 40px; border-radius: 10px; background: #ff0000; color: #fff; display: grid; place-items: center; font-size: 18px; }
+    .row { display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; margin-top: 8px; }
+    .reacts { display: flex; gap: 6px; }
+    .chip { border: 0; background: var(--chip); color: #e8eef3; border-radius: 16px; padding: 4px 9px; font-size: 13px; cursor: pointer; font-family: inherit; position: relative; }
+    .chip.on { background: #2b5278; box-shadow: inset 0 0 0 1px rgba(90,170,230,.45); }
+    .chip.pulse { animation: pulse .28s ease; }
+    @keyframes pulse { 0% { transform: scale(1); } 40% { transform: scale(1.18); } 100% { transform: scale(1); } }
+    .meta-right { color: #7f8f9c; font-size: 12px; display: flex; align-items: center; gap: 6px; white-space: nowrap; padding-bottom: 2px; }
+    .side-emoji { font-size: 16px; margin-left: 4px; animation: popin .25s ease; }
+    @keyframes popin { from { transform: scale(.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .burst-layer { position: fixed; inset: 0; pointer-events: none; z-index: 9999; overflow: hidden; }
+    .spark {
+      position: fixed; pointer-events: none; border-radius: 50%;
+      animation: fly var(--d) cubic-bezier(.12,.7,.3,1) forwards;
+    }
+    .spark.emoji { background: none; border-radius: 0; font-size: 14px; line-height: 1; }
+    @keyframes fly {
+      0% { transform: translate(0,0) scale(1) rotate(0deg); opacity: 1; }
+      70% { opacity: 1; }
+      100% { transform: translate(var(--x), var(--y)) scale(0) rotate(var(--r)); opacity: 0; }
+    }
+    footer.join { background: var(--header); border-top: 1px solid #243140; height: 54px; display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0; }
+    footer.join a { color: var(--blue); font-size: 16px; font-weight: 600; text-decoration: none; }
+    footer.join .gift { position: absolute; right: 16px; color: #7d8b97; font-size: 20px; }
+  </style>
+</head>
+<body>
+  <div class="app-window">
+    <div class="winbar">
+      <span id="winTitle">김지현 관점방</span>
+      <div class="dots"><i></i><i></i><i class="cls"></i></div>
+    </div>
+    <header class="tg">
+      <div class="back">‹</div>
+      <img class="avatar" id="avatar" src="assets/avatar.jpg" alt="프로필" />
+      <div class="who">
+        <h1><span id="name">김지현 관점방</span><span id="badge">🎖</span></h1>
+        <p id="subs">구독자 11,786명</p>
+      </div>
+      <div class="icon-btn">🔍</div>
+      <div class="icon-btn">⋮</div>
+    </header>
+    <div class="feed" id="feed"></div>
+    <footer class="join">
+      <a id="join" href="#" target="_blank" rel="noopener">채널 들어가기</a>
+      <span class="gift">🎁</span>
+    </footer>
+  </div>
+  <div class="burst-layer" id="burst"></div>
+  <script src="chats.js"></script>
+  <script>
+    (function () {
+      var S = window.SITE || {};
+      var list = window.CHATS || [];
+      var KEY = "tg-react-v1";
+      function load() { try { return JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) { return {}; } }
+      function save(data) { localStorage.setItem(KEY, JSON.stringify(data)); }
+      var store = load();
+      document.getElementById("name").textContent = S.channelName || "";
+      document.getElementById("badge").textContent = S.badge || "";
+      document.getElementById("subs").textContent = S.subscribers || "";
+      document.getElementById("winTitle").textContent = S.channelName || "";
+      document.title = S.channelName || document.title;
+      if (S.avatar) document.getElementById("avatar").src = S.avatar;
+      var join = document.getElementById("join");
+      join.href = S.joinUrl || "#";
+      join.textContent = S.joinLabel || "채널 들어가기";
+      function linkify(text) { return String(text).replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>'); }
+      function esc(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+      function getState(post) {
+        var s = store[post.id] || {};
+        if (s.viewsSeen !== true) {
+          s.viewsSeen = true;
+          s.views = (post.views || 0) + 1;
+          store[post.id] = s;
+          save(store);
+        }
+        return {
+          heartOn: !!s.heartOn,
+          likeOn: !!s.likeOn,
+          hearts: (post.hearts || 0) + (s.heartOn ? 1 : 0),
+          likes: (post.likes || 0) + (s.likeOn ? 1 : 0),
+          views: s.views || post.views || 0
+        };
+      }
+      function render() {
+        document.getElementById("feed").innerHTML = list.map(function (item) {
+          if (item.type === "date") return '<div class="date-chip"><span>' + esc(item.text) + "</span></div>";
+          var st = getState(item);
+          var yt = "";
+          if (item.youtube) {
+            yt = '<a class="yt" href="' + esc(item.youtube.url) + '" target="_blank" rel="noopener">' +
+              '<div class="meta"><small>' + esc(item.youtube.label || "YouTube") + "</small>" +
+              "<b>" + esc(item.youtube.title || "") + "</b><p>" + esc(item.youtube.desc || "") + "</p></div>" +
+              '<div class="thumb"><img src="' + esc(item.youtube.thumb) + '" alt="썸네일" width="1920" height="1080" /><div class="play">▶</div></div></a>';
+          }
+          return '<article class="msg" data-id="' + esc(item.id) + '">' +
+            '<div class="author">' + esc(S.channelName || "") + (S.badge ? " " + S.badge : "") + "</div>" +
+            '<div class="txt">' + linkify(esc(item.text || "")) + "</div>" +
+            (item.disclaimer ? '<div class="disc">' + esc(item.disclaimer) + "</div>" : "") + yt +
+            '<div class="row"><div class="reacts">' +
+              '<button class="chip' + (st.heartOn ? " on" : "") + '" data-kind="heart">❤ ' + st.hearts + "</button>" +
+              '<button class="chip' + (st.likeOn ? " on" : "") + '" data-kind="like">👍 ' + st.likes + "</button>" +
+            '</div><div class="meta-right">👁 ' + st.views + " &nbsp;" + esc(item.time || "") +
+              (st.heartOn ? '<span class="side-emoji">❤</span>' : "") +
+              (st.likeOn ? '<span class="side-emoji">👍</span>' : "") +
+            "</div></div></article>";
+        }).join("");
+      }
+      function burst(el, kind, turningOn) {
+        var layer = document.getElementById("burst");
+        if (!layer) return;
+        var r = el.getBoundingClientRect();
+        var cx = r.left + r.width / 2;
+        var cy = r.top + r.height / 2;
+        var colors = kind === "heart"
+          ? ["#ff4d6d", "#ff8fab", "#2ee6a6", "#5ad2ff", "#ffd166", "#c77dff"]
+          : ["#ffd166", "#ffe566", "#2ee6a6", "#5ad2ff", "#ff8fab", "#ffffff"];
+        var emojis = kind === "heart" ? ["❤", "💗", "✨"] : ["👍", "✨", "💛"];
+        var n = turningOn ? 28 : 10;
+        for (var i = 0; i < n; i++) {
+          var p = document.createElement("span");
+          var isEmoji = i % 5 === 0;
+          p.className = "spark" + (isEmoji ? " emoji" : "");
+          var ang = (Math.PI * 2 * i) / n + Math.random() * 0.4;
+          var dist = 36 + Math.random() * (turningOn ? 70 : 36);
+          p.style.left = cx + "px";
+          p.style.top = cy + "px";
+          p.style.setProperty("--x", Math.cos(ang) * dist + "px");
+          p.style.setProperty("--y", Math.sin(ang) * dist + "px");
+          p.style.setProperty("--r", (Math.random() * 240 - 120) + "deg");
+          p.style.setProperty("--d", (0.45 + Math.random() * 0.45) + "s");
+          if (isEmoji) {
+            p.textContent = emojis[i % emojis.length];
+          } else {
+            var size = 4 + Math.random() * 6;
+            p.style.width = size + "px";
+            p.style.height = size + "px";
+            p.style.background = colors[i % colors.length];
+          }
+          layer.appendChild(p);
+          setTimeout(function (node) { node.remove(); }, 900, p);
+        }
+      }
+      document.getElementById("feed").addEventListener("click", function (e) {
+        var btn = e.target.closest(".chip");
+        if (!btn) return;
+        var id = btn.closest(".msg").getAttribute("data-id");
+        var kind = btn.getAttribute("data-kind");
+        store[id] = store[id] || {};
+        var nextOn = kind === "heart" ? !store[id].heartOn : !store[id].likeOn;
+        burst(btn, kind, nextOn);
+        if (kind === "heart") store[id].heartOn = nextOn;
+        if (kind === "like") store[id].likeOn = nextOn;
+        save(store);
+        render();
+        var again = document.querySelector('.msg[data-id="' + id + '"] .chip[data-kind="' + kind + '"]');
+        if (again) {
+          again.classList.add("pulse");
+          setTimeout(function () { again.classList.remove("pulse"); }, 280);
+        }
+      });
+      render();
+      if ("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js").catch(function () {});
+    })();
+  </script>
+</body>
+</html>
